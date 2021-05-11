@@ -34,6 +34,7 @@ const promptUser = () => {
 	])
 
 		//MENU TREE
+
 		.then((response) => {
 			switch (response.options) {
 				case "ADD AN EMPLOYEE":
@@ -45,14 +46,14 @@ const promptUser = () => {
 				case "ADD A ROLE":
 					addRole();
 					break;
+				case "VIEW EMPLOYEES":
+					viewEmployees();
+					break;
 				case "VIEW DEPARTMENTS":
 					viewDepartment();
 					break;
 				case "VIEW EMPLOYEE ROLES":
 					viewRole();
-					break;
-				case "VIEW EMPLOYEES":
-					viewEmployees();
 					break;
 				case "UPDATE AN EXISTING EMPLOYEE":
 					updateEmployee();
@@ -65,9 +66,10 @@ promptUser();
 
 //VIEW EMPLOYEE
 function viewEmployees() {
-	console.log("Adding employee...")
-	connection.query('SELECT * FROM employee', function (err, res) {
+	console.log("Viewing employee...")
+	connection.query('SELECT employee.firstName, employee.lastName,	role.title,	role.salary, department.departmentName FROM employee LEFT JOIN role ON employee.roleID = role.id JOIN department ON role.id = department.id;', function (err, res) {
 		console.table(res)
+		promptUser();
 	});
 }
 
@@ -76,6 +78,7 @@ function viewDepartment() {
 	console.log("Viewing departments...")
 	connection.query('SELECT * FROM department', function (err, res) {
 		console.table(res)
+		promptUser();
 	});
 }
 
@@ -84,6 +87,7 @@ function viewRole() {
 	console.log("Viewing departments...")
 	connection.query('SELECT * FROM role', function (err, res) {
 		console.table(res)
+		promptUser();
 	});
 }
 
@@ -92,56 +96,68 @@ function viewRole() {
 function addEmployee() {
 	console.log("Adding Employee...")
 
-		const promptUser = () => {
-			return inquirer.prompt([
-				{
-					type: 'choice',
-					name: 'options',
-					message: 'What action would you like to take?',
-					choices: [
-						"VIEW DEPARTMENTS",
-						"VIEW EMPLOYEE ROLES",
-						"VIEW EMPLOYEES",
+	const promptUser = () => {
+		return inquirer.prompt([
+			{
+				type: 'input',
+				name: 'firstName',
+				message: 'What is their first name?',
+			},
+			{
+				type: 'input',
+				name: 'lastName',
+				message: 'What is their last name?',
+			},
+			{
+				type: 'input',
+				name: 'roleID',
+				message: 'What will be their role ID?',
+			},
+			{
+				type: 'input',
+				name: 'roleID',
+				message: 'Who will be their manager ID?',
+			},
 
-						"ADD AN EMPLOYEE",
-						"ADD A DEPARTMENT",
-						"ADD A ROLE",
+		])
+			.then((response) => {
+				console.log("Adding a new employee...")
+				connection.query(`INSERT INTO employee(firstName, lastName, roleID, managerID) VALUES (?,?,?);`)
+					console.table(res)
+					promptUser();
 
-						"UPDATE AN EXISTING EMPLOYEE"],
-				},
-			])
-		}
-			promptUser();
+				}
+	promptUser();
 
-		connection.query('SELECT * FROM employee', function (err, res) {
-			console.table(res)
-		});
+				// connection.query('SELECT * FROM employee', function (err, res) {
+				// console.table(res)
+				// });
 
-	}
+			}
 
-	//ADD DEPARTMENT	
-	function addDepartment() {
-		console.log("Adding Employee...")
-		connection.query('SELECT * FROM departmenr', function (err, res) {
-			console.table(res)
-		});
-	}
+//ADD DEPARTMENT	
+function addDepartment() {
+					console.log("Adding Department...")
+					connection.query('SELECT * FROM department', function (err, res) {
+						console.table(res)
+					});
+				}
 
-	//ADD ROLE
-	function addRole() {
-		console.log("Viewing roles...")
-		connection.query('SELECT * FROM role', function (err, res) {
-			console.table(res)
-		});
-	}
+//ADD ROLE
+function addRole() {
+					console.log("Viewing roles...")
+					connection.query('SELECT * FROM role', function (err, res) {
+						console.table(res)
+					});
+				}
 
-	//UPDATE EMPLOYEE ROLE
-	function updateEmployee() {
-		console.log("Updating roles...")
-		connection.query('SELECT * FROM role', function (err, res) {
-			console.table(res)
-		});
-	}
+//UPDATE EMPLOYEE ROLE
+function updateEmployee() {
+					console.log("Updating employee...")
+					connection.query('SELECT * FROM role', function (err, res) {
+						console.table(res)
+					});
+				}
 
 
 
