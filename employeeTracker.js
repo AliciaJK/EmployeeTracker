@@ -82,8 +82,9 @@ function viewDepartment() {
 	console.log("Viewing departments...")
 	connection.query('SELECT * FROM department', function (err, res) {
 		console.table(res)
-		promptUser();
+
 	});
+	promptUser();
 }
 
 //VIEW ROLE
@@ -91,8 +92,8 @@ function viewRole() {
 	console.log("Viewing departments...")
 	connection.query('SELECT * FROM role', function (err, res) {
 		console.table(res)
-		promptUser();
 	});
+	promptUser();
 }
 
 
@@ -125,11 +126,20 @@ function addEmployee() {
 
 		])
 			.then((response) => {
+				console.log(response)
 				console.log("Adding a new employee...")
-				connection.query('INSERT INTO employee(firstName, lastName, roleID, managerID) VALUES (?,?,?,?);'
-				[response.firstName, response.lastName, response.roleID, response.managerID], function (err, res) {
-					console.table(response)
-				})
+				connection.query('INSERT INTO employee SET ?',
+					{
+						firstName: response.firstName,
+						lastName: response.lastName,
+						roleID: response.roleID,
+						managerID: response.managerID
+					},
+
+					function (err, res) {
+						console.table(res)
+						console.table(err)
+					})
 			})
 	}
 	promptUser();
